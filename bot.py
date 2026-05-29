@@ -1,5 +1,5 @@
 
-#BOT_TOKEN = "8640345902:AAFlqlPWJW3UHt-jYPMNKW1VgyhXvArO0Fk"
+
 import sqlite3
 from datetime import datetime
 
@@ -17,7 +17,7 @@ from telegram.ext import (
 )
 
 # PASTE YOUR BOT TOKEN HERE
-BOT_TOKEN = "8640345902:AAFlqlPWJW3UHt-jYPMNKW1VgyhXvArO0Fk"
+BOT_TOKEN = "864034590Fk"
 
 
 # TEMP USER CATEGORY
