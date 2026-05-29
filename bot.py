@@ -1,5 +1,4 @@
-
-
+import os
 import sqlite3
 from datetime import datetime
 
@@ -16,9 +15,7 @@ from telegram.ext import (
     filters
 )
 
-# PASTE YOUR BOT TOKEN HERE
-BOT_TOKEN = "864034590Fk"
-
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 # TEMP USER CATEGORY
 user_category = {}
