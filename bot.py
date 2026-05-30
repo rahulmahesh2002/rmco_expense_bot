@@ -1,6 +1,8 @@
 import os
 import sqlite3
 from datetime import datetime
+import threading
+from flask import Flask
 
 from telegram import (
     Update,
@@ -390,6 +392,17 @@ app.add_handler(
     )
 )
 
-print("Bot is running...")
+web_app = Flask(__name__)
 
+@web_app.get("/")
+def home():
+    return "OK", 200
+
+def run_web():
+    port = int(os.getenv("PORT", "10000"))
+    web_app.run(host="0.0.0.0", port=port, use_reloader=False)
+
+print("Web server starting...")
+threading.Thread(target=run_web, daemon=True).start()
+print("Bot is running...")
 app.run_polling()
