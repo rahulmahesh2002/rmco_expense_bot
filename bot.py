@@ -1,5 +1,4 @@
 import os
-import sqlite3
 from datetime import datetime
 import threading
 from flask import Flask
@@ -31,16 +30,20 @@ LIMITS = {
 
 
 # DATABASE
-conn = sqlite3.connect("expenses.db", check_same_thread=False)
+import psycopg2
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+conn = psycopg2.connect(DATABASE_URL)
 cursor = conn.cursor()
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS expenses (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
-    category TEXT,
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT,
+    category VARCHAR(50),
     amount INTEGER,
-    cycle TEXT
+    cycle VARCHAR(20)
 )
 """)
 
@@ -174,7 +177,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 """
                 INSERT INTO expenses
                 (user_id, category, amount, cycle)
-                VALUES (?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s)
                 """,
                 (
                     user_id,
@@ -210,9 +213,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 """
                 SELECT SUM(amount)
                 FROM expenses
-                WHERE user_id=?
-                AND category=?
-                AND cycle=?
+                WHERE user_id=%s
+                AND category=%s
+                AND cycle=%s
                 """,
                 (
                     user_id,
@@ -251,9 +254,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 """
                 SELECT SUM(amount)
                 FROM expenses
-                WHERE user_id=?
-                AND category=?
-                AND cycle=?
+                WHERE user_id=%s
+                AND category=%s
+                AND cycle=%s
                 """,
                 (
                     user_id,
@@ -289,8 +292,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             """
             SELECT category, amount
             FROM expenses
-            WHERE user_id=?
-            AND cycle=?
+            WHERE user_id=%s
+            AND cycle=%s
             ORDER BY id DESC
             LIMIT 5
             """,
@@ -344,9 +347,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 """
                 SELECT SUM(amount)
                 FROM expenses
-                WHERE user_id=?
-                AND category=?
-                AND cycle=?
+                WHERE user_id=%s
+                AND category=%s
+                AND cycle=%s
                 """,
                 (
                     user_id,
