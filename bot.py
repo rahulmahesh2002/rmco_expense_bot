@@ -146,7 +146,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = [
             ["🧾 Essential"],
             ["🎯 Lifestyle"],
-            ["📈 Investing"]
+            ["📈 Investing"],
+            ["⬅️ Back to Menu"]
         ]
 
         reply_markup = ReplyKeyboardMarkup(
@@ -158,6 +159,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Choose category:",
             reply_markup=reply_markup
         )
+    # BACK TO MENU
+    elif text == "⬅️ Back to Menu":
+        await start(update, context)
+        return
 
     # CATEGORY SELECT
     elif text in ["🧾 Essential", "🎯 Lifestyle", "📈 Investing"]:
