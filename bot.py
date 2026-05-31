@@ -34,7 +34,10 @@ import psycopg2
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-conn = psycopg2.connect(DATABASE_URL)
+def get_connection():
+    return psycopg2.connect(DATABASE_URL)
+
+conn = get_connection()
 cursor = conn.cursor()
 
 cursor.execute("""
@@ -48,6 +51,7 @@ CREATE TABLE IF NOT EXISTS expenses (
 """)
 
 conn.commit()
+conn.close()
 
 
 # GET CURRENT BILLING CYCLE
@@ -173,6 +177,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             amount = int(text)
 
             # SAVE TO DATABASE
+
+            conn = get_connection()
+            cursor = conn.cursor()
             cursor.execute(
                 """
                 INSERT INTO expenses
@@ -188,6 +195,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
 
             conn.commit()
+            cursor.close()
+            conn.close()
 
             await update.message.reply_text(
                 f"✅ Added ₹{amount} to {category}"
@@ -209,6 +218,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         for category in LIMITS:
 
+            conn = get_connection()
+            cursor = conn.cursor()
+
             cursor.execute(
                 """
                 SELECT SUM(amount)
@@ -225,6 +237,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
 
             result = cursor.fetchone()[0]
+
+            cursor.close()
+            conn.close()
 
             total = result if result else 0
 
@@ -250,6 +265,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         for category in LIMITS:
 
+            conn = get_connection()
+            cursor = conn.cursor()
+
             cursor.execute(
                 """
                 SELECT SUM(amount)
@@ -266,6 +284,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
 
             result = cursor.fetchone()[0]
+
+            cursor.close()
+            conn.close()
 
             total = result if result else 0
 
@@ -343,6 +364,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         for category in LIMITS:
 
+            conn = get_connection()
+            cursor = conn.cursor()
+
             cursor.execute(
                 """
                 SELECT SUM(amount)
@@ -359,6 +383,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
 
             result = cursor.fetchone()[0]
+
+            cursor.close()
+            conn.close()
 
             amount = result if result else 0
 
