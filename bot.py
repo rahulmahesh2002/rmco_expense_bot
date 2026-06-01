@@ -18,6 +18,8 @@ from telegram.ext import (
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
+ALLOWED_USER_ID = int(os.getenv("ALLOWED_USER_ID"))
+
 # TEMP USER CATEGORY
 user_category = {}
 
@@ -114,6 +116,12 @@ def get_status(category, amount):
 # MAIN MENU
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    user_id = update.effective_user.id
+    if user_id != ALLOWED_USER_ID:
+        await update.message.reply_text( "🔒 This is a personal portfolio project and is not open for public use.")
+        return
+
+
     keyboard = [
         ["➕ Add Expense"],
         ["📊 Summary", "💸 Remaining"],
@@ -137,6 +145,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = update.message.text
     user_id = update.message.from_user.id
+
+    if user_id != ALLOWED_USER_ID:
+        await update.message.reply_text( "🔒 This is a personal portfolio project and is not open for public use.")
+        return
+
 
     current_cycle = get_current_cycle()
 
